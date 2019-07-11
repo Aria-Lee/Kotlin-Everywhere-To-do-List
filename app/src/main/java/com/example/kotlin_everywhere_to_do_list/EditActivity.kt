@@ -1,6 +1,7 @@
 package com.example.kotlin_everywhere_to_do_list
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -30,8 +31,14 @@ class EditActivity : AppCompatActivity() {
 
     private fun confirm(){
         val newEvent = edtText_edit.text.toString()
-        val intent = Intent().putExtra("newEvent", newEvent)
-        setResult(Activity.RESULT_OK, intent)
+//        val intent = Intent().putExtra("newEvent", newEvent)
+//        setResult(Activity.RESULT_OK, intent)
+        saveEvent(newEvent)
+        setResult(Activity.RESULT_OK)
         finish()
+    }
+    private fun saveEvent(note :String){
+        var  editor = getSharedPreferences("MySP", Context.MODE_PRIVATE).edit()
+        editor.putString("myNote",note).apply()
     }
 }
