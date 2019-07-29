@@ -38,7 +38,10 @@ class EditActivity : AppCompatActivity() {
         finish()
     }
     private fun saveEvent(note :String){
-        var  editor = getSharedPreferences("MySP", Context.MODE_PRIVATE).edit()
-        editor.putString("myNote",note).apply()
+        val preference = getSharedPreferences("MySP", Context.MODE_PRIVATE)
+        val editor = preference.edit()
+        var index = 0
+        while (!preference.getString("myNote-$index", "").isNullOrEmpty()) index++
+        editor.putString("myNote-$index",note).apply()
     }
 }
