@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
-import android.widget.Toast
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -22,6 +22,11 @@ class MainActivity : AppCompatActivity() {
 
         rv_main.layoutManager = LinearLayoutManager(this)
         rv_main.adapter = myAdapter
+        myAdapter.setToEditClickListener(object : MyAdapter.ItemClickListener{
+            override fun toEdit(event:EventData) {
+                editEvent(event)
+            }
+        })
         loadEvent()
 
 //        btn_edit.setOnClickListener {
@@ -36,12 +41,12 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, 1)
     }
 
-//    private fun editEvent(){
-//        val intent = Intent(this, EditActivity::class.java)
-//        val event = tv_display.text
-//        intent.putExtra("event", event)
-//        startActivityForResult(intent, 1)
-//    }
+    private fun editEvent(event: EventData){
+        val intent = Intent(this, EditActivity::class.java)
+        val eventString = Gson().toJson(event)
+        intent.putExtra("event", eventString)
+        startActivityForResult(intent, 1)
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -65,9 +70,10 @@ class MainActivity : AppCompatActivity() {
     private fun loadEvent(){
         val loader = getSharedPreferences("MySP", Context.MODE_PRIVATE)
         val keyList = loader.all.keys.sorted()
-        val noteList = mutableListOf<String>()
+        val noteList = mutableListOf<EventData>()
         for (key in keyList){
-            noteList.add(loader.getString(key, "")!!)
+            val event = EventData(key, loader.getString(key, "")!!)
+            noteList.add(event)
         }
         myAdapter.update(noteList)
     }
