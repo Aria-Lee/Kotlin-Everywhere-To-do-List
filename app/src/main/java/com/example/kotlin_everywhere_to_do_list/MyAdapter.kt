@@ -8,14 +8,15 @@ import kotlinx.android.synthetic.main.item_note.view.*
 
 class MyAdapter: RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
-    private var noteList = mutableListOf<EventData>()
+    private var noteList = mutableListOf<NoteData>()
     private var itemClickListenerImp: ItemClickListener? = null
 
     interface ItemClickListener{
-        fun toEdit(event:EventData)
+        fun toEdit(note:NoteData)
+        fun selectNote(note: NoteData)
     }
 
-    fun setToEditClickListener(itemClickListenerImp: ItemClickListener){
+    fun setItemClickListener(itemClickListenerImp: ItemClickListener){
         this.itemClickListenerImp = itemClickListenerImp
     }
 
@@ -35,15 +36,20 @@ class MyAdapter: RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
     inner class MyViewHolder(view: View): RecyclerView.ViewHolder(view){
         val tvNote = view.tv_note
         val imgToEdit = view.img_to_edit
-        fun bind(note: EventData){
-            tvNote.text = note.note
+        val chkDelete = view.chk_delete
+        fun bind(note: NoteData){
+            tvNote.text = note.title
+            chkDelete.isChecked = note.isSelected
             imgToEdit.setOnClickListener {
                 itemClickListenerImp?.toEdit(note)
+            }
+            chkDelete.setOnClickListener {
+                itemClickListenerImp?.selectNote(note)
             }
         }
     }
 
-    fun update(newList: MutableList<EventData>){
+    fun update(newList: MutableList<NoteData>){
         noteList = newList
         notifyDataSetChanged()
     }

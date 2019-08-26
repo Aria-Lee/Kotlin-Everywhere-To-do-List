@@ -2,7 +2,6 @@ package com.example.kotlin_everywhere_to_do_list
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -12,7 +11,7 @@ import kotlinx.android.synthetic.main.activity_edit.*
 class EditActivity : AppCompatActivity() {
 
     var isEditMode = false
-    var editEventKey = ""
+    var editNoteKey = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,12 +19,12 @@ class EditActivity : AppCompatActivity() {
 
         title = "編輯模式"
 
-        if (!intent.getStringExtra("event").isNullOrEmpty()) {
+        if (!intent.getStringExtra("note").isNullOrEmpty()) {
             isEditMode = true
-            val eventString = intent.getStringExtra("event")
-            val event = Gson().fromJson(eventString, EventData::class.java)
-            editEventKey = event.key
-            edtText_edit.setText(event.note)
+            val noteString = intent.getStringExtra("note")
+            val note = Gson().fromJson(noteString, NoteData::class.java)
+            editNoteKey = note.key
+            edtText_edit.setText(note.title)
         }
 
         btn_confirm.setOnClickListener {
@@ -40,19 +39,17 @@ class EditActivity : AppCompatActivity() {
     }
 
     private fun confirm() {
-        val newEvent = edtText_edit.text.toString()
-//        val intent = Intent().putExtra("newEvent", newEvent)
-//        setResult(Activity.RESULT_OK, intent)
-        saveEvent(newEvent)
+        val newNote = edtText_edit.text.toString()
+        saveNote(newNote)
         setResult(Activity.RESULT_OK)
         finish()
     }
 
-    private fun saveEvent(note: String) {
+    private fun saveNote(note: String) {
         val preference = getSharedPreferences("MySP", Context.MODE_PRIVATE)
         val editor = preference.edit()
         if(isEditMode){
-            editor.putString(editEventKey, note).apply()
+            editor.putString(editNoteKey, note).apply()
         }else{
             var index = 0
             while (!preference.getString("myNote-$index", "").isNullOrEmpty()) index++
