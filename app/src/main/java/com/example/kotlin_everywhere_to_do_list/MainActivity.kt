@@ -1,7 +1,9 @@
 package com.example.kotlin_everywhere_to_do_list
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -24,6 +26,18 @@ class MainActivity : AppCompatActivity() {
         rv_main.layoutManager = LinearLayoutManager(this)
         rv_main.adapter = myAdapter
         myAdapter.setItemClickListener(object : MyAdapter.ItemClickListener {
+            override fun showNote(note: NoteData) {
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle("代辦事項")
+                    .setMessage("事項：${note.title}\n" +
+                            "內容：${note.content}\n" +
+                            "時間：${note.date}")
+                    .setPositiveButton("OK") {
+                            dialog, which -> dialog?.dismiss()
+                    }
+                    .show()
+            }
+
             override fun selectNote(note: NoteData) {
                 note.isSelected = !note.isSelected
                 menuItemDelete?.isEnabled = noteList.find { it.isSelected } != null
@@ -86,7 +100,8 @@ class MainActivity : AppCompatActivity() {
         val keyList = loader.all.keys.sorted()
         noteList = mutableListOf<NoteData>()
         for (key in keyList) {
-            val note = NoteData(key, loader.getString(key, "")!!)
+            val noteString = loader.getString(key, "")
+            val note = Gson().fromJson(noteString, NoteData::class.java)
             noteList.add(note)
         }
         myAdapter.update(noteList)

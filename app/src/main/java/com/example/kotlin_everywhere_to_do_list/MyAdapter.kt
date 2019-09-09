@@ -14,6 +14,7 @@ class MyAdapter: RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
     interface ItemClickListener{
         fun toEdit(note:NoteData)
         fun selectNote(note: NoteData)
+        fun showNote(note: NoteData)
     }
 
     fun setItemClickListener(itemClickListenerImp: ItemClickListener){
@@ -45,6 +46,10 @@ class MyAdapter: RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
             }
             chkDelete.setOnClickListener {
                 itemClickListenerImp?.selectNote(note)
+            }
+            itemView.setOnClickListener {
+                itemClickListenerImp?.showNote(note)
+
             }
         }
     }
